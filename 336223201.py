@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 class GameOfLife(game_of_life_interface.GameOfLife):
-    def __init__(self, size_of_board: int, rules: str, rle: str, pattern_position, board_start_mode=1):
+    def __init__(self, size_of_board, board_start_mode, rules, rle, pattern_position):
         self.size_of_board = size_of_board
         self.board_start_mode = board_start_mode
         self.rules = rules
@@ -15,7 +15,7 @@ class GameOfLife(game_of_life_interface.GameOfLife):
         if self.rle == '':
             if self.board_start_mode in [1, 2, 3, 4]:
                 start_mode = {1: [0.5, 0.5], 2: [0.8, 0.2], 3: [0.2, 0.8], 4: []}
-                board = np.random.choice([1, 0], (self.size_of_board, self.size_of_board), True, start_mode[self.board_start_mode])
+                board = np.random.choice([1, 0], (size_of_board, size_of_board), True, start_mode[board_start_mode])
                 return board
         else:
             pass
