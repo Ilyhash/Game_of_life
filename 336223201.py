@@ -11,14 +11,14 @@ class GameOfLife(game_of_life_interface.GameOfLife):
         self.rle = rle
         self.pattern_position = pattern_position
 
-    def board(self, size_of_board, board_start_mode):
+    def game_board(self, size_of_board, board_start_mode):
         if self.rle == '':
+            start_mode = {1: [0.5, 0.5], 2: [0.8, 0.2], 3: [0.2, 0.8], 4: []}
             if self.board_start_mode in [1, 2, 3, 4]:
-                start_mode = {1: [0.5, 0.5], 2: [0.8, 0.2], 3: [0.2, 0.8], 4: []}
                 board = np.random.choice([1, 0], (size_of_board, size_of_board), True, start_mode[board_start_mode])
-                return board
-        else:
-            pass
+            else:
+                board = np.random.choice([1, 0], (size_of_board, size_of_board), True, start_mode[board_start_mode])
+            return board
 
     def update(self):
         pass
