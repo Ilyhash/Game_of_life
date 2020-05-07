@@ -10,7 +10,10 @@ class GameOfLife(game_of_life_interface.GameOfLife):
         self.rules = rules
         self.rle = rle
         self.pattern_position = pattern_position
-        self.board = self.game_board
+        self.board = self.game_board()
+
+    def __repr__(self):
+        return str(self.board)
 
     def game_board(self):
         if self.rle == '':
@@ -40,3 +43,5 @@ class GameOfLife(game_of_life_interface.GameOfLife):
 
 if __name__ == '__main__':
     print('write your tests here')  # don't forget to indent your code here!
+    G1 = GameOfLife(15, 5, 2, "", 3)
+    print(G1.board)
