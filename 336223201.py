@@ -10,14 +10,15 @@ class GameOfLife(game_of_life_interface.GameOfLife):
         self.rules = rules
         self.rle = rle
         self.pattern_position = pattern_position
+        self.board = self.game_board
 
-    def game_board(self, size_of_board, board_start_mode):
+    def game_board(self):
         if self.rle == '':
             start_mode = {1: [0.5, 0.5], 2: [0.8, 0.2], 3: [0.2, 0.8], 4: []}
             if self.board_start_mode in [1, 2, 3, 4]:
-                board = np.random.choice([1, 0], (size_of_board, size_of_board), True, start_mode[board_start_mode])
+                board = np.random.choice([1, 0], (self.size_of_board, self.size_of_board), True, start_mode[self.board_start_mode])
             else:
-                board = np.random.choice([1, 0], (size_of_board, size_of_board), True, start_mode[board_start_mode])
+                board = np.random.choice([1, 0], (self.size_of_board, self.size_of_board), True, start_mode[1])
             return board
 
     def update(self):
