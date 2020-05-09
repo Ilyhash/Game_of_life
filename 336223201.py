@@ -35,15 +35,27 @@ class GameOfLife(game_of_life_interface.GameOfLife):
         self.board[i:i+36, j:j+9] = gosper_glider_gun
 
     def update(self):
-        pass
-
-    def return_board(self):
-        pass
+        rules = self.rules.split('/')
+        born = [int(num) for num in rules[0] if num.isdigit()]
+        survive = [int(num) for num in rules[1] if num.isdigit()]
+        new_board = self.board
+        for i in range(self.size_of_board):
+            for j in range(self.size_of_board):
+                neighbours = int((self.board[(i - 1) % self.size_of_board, (j - 1) % self.size_of_board] +
+                    self.board[(i - 1) % self.size_of_board, j] + self.board[(i - 1) % self.size_of_board, (j + 1) % self.size_of_board] +
+                    self.board[i, (j - 1) % self.size_of_board] + self.board[i, (j + 1) % self.size_of_board] +
+                    self.board[(i + 1) % self.size_of_board, (j - 1) % self.size_of_board] + self.board[(i + 1) % self.size_of_board, j] +
+                    self.board[(i + 1) % self.size_of_board, (j + 1) % self.size_of_board]) / 255)
+                if (self.board[i, j] == 0 and neighbours in born) or (self.board[i, j] == 255 and neighbours in survive):
+                    new_board[i, j] = 255
+                else:
+                    new_board[i, j] = 0
+        self.board = new_board
 
     def save_board_to_file(self, file_name):
         plt.imsave(file_name, self.board)  # needs check
 
-    def display_board(self):  # needs check
+    def display_board(self):
         plt.imshow(self.board)
         plt.show()
 
@@ -53,6 +65,9 @@ class GameOfLife(game_of_life_interface.GameOfLife):
 
 if __name__ == '__main__':
     print('write your tests here')  # don't forget to indent your code here!
-    g1 = GameOfLife(100, 2, 2, "", 3)
-    print(g1.board)
-    g1.display_board()
+    g1 = GameOfLife(100, 3, 'b3/s23', "", 3)
+    for i in range(10):
+        g1.display_board()
+        g1.update()
+
+
