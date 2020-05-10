@@ -10,35 +10,60 @@ class GameOfLife(game_of_life_interface.GameOfLife):
         self.rules = rules
         self.rle = rle
         self.pattern_position = pattern_position
-        self.board = self.return_board()
+        self.board = self.build_board()
 
     def __repr__(self):
-        return str(self.board)
+        return self.board.tolist()
 
-    def return_board(self):
+    def build_board(self):
         if self.rle == '':
             start_mode = {1: [0.5, 0.5], 2: [0.2, 0.8], 3: [0.8, 0.2]}
             if self.board_start_mode in [2, 3]:
-                board = np.random.choice([0, 255], (self.size_of_board, self.size_of_board), True, start_mode[self.board_start_mode])
+                self.board = np.random.choice([0, 255], (self.size_of_board, self.size_of_board), True, start_mode[self.board_start_mode])
             elif self.board_start_mode == 4:
-                board = np.zeros([self.size_of_board, self.size_of_board])
+                self.board = np.zeros([self.size_of_board, self.size_of_board])
                 self.pattern_position = [10, 10]
-                self.board.add_gosper_gg()
+                self.add_gosper_gg()
             else:
-                board = np.random.choice([0, 255], (self.size_of_board, self.size_of_board), True, start_mode[1])
-        return board
+                self.board = np.random.choice([0, 255], (self.size_of_board, self.size_of_board), True, start_mode[1])
+        else:
+            self.board = np.zeros([self.size_of_board, self.size_of_board])
+            self.board[self.pattern_position[0]:len(rle), self.pattern_position[1]:len(rle[0])] = self.transform_rle_to_matrix(self.rle)
+        return self.board
 
     def add_gosper_gg(self):
-        gosper_glider_gun = self.transform_rle_to_matrix(rle='24bo11b$22bobo11b$12b2o6b2o12b2o$11bo3bo4b2o12b2o$2o8bo5bo3b2o14b$2o8bo3bob2o4bobo11b$10bo5bo7bo11b$11bo3bo20b$12b2o!')
-        i = self.pattern_position[0]
-        j = self.pattern_position[1]
-        self.board[i:i+36, j:j+9] = gosper_glider_gun
+        j = self.pattern_position[0]
+        i = self.pattern_position[1]
+        self.board[i+5:i+7, j+0:j+2] = 255
+        self.board[i + 3, j+12:j+14] = 255
+        self.board[i + 3:i + 6, j+20:j + 22] = 255
+        self.board[i + 1:i + 3, j + 24] = 255
+        self.board[i + 2, j + 22] = 255
+        self.board[i + 6, j + 22] = 255
+        self.board[i + 6:i + 8, j + 24] = 255
+        self.board[i + 5:i + 8, j + 10] = 255
+        self.board[i + 9, j+12:j + 14] = 255
+        self.board[i + 4, j+11] = 255
+        self.board[i + 8, j+11] = 255
+        self.board[i + 6, j + 14] = 255
+        self.board[i + 4, j + 15] = 255
+        self.board[i + 8, j + 15] = 255
+        self.board[i + 5:i + 8, j + 16] = 255
+        self.board[i + 6, j + 17] = 255
+        self.board[i + 3:i + 5, j + 34:j + 36] = 255
+
+    def return_board(self):
+        board = self.board.tolist()
+        for x in board:
+            for i in range(len(board[0])):
+                x[i] = int(x[i])
+        return board
 
     def update(self):
         rules = self.rules.split('/')
         born = [int(num) for num in rules[0] if num.isdigit()]
         survive = [int(num) for num in rules[1] if num.isdigit()]
-        new_board = self.board
+        new_board = self.board.copy()
         for i in range(self.size_of_board):
             for j in range(self.size_of_board):
                 neighbours = int((self.board[(i - 1) % self.size_of_board, (j - 1) % self.size_of_board] +
@@ -65,9 +90,10 @@ class GameOfLife(game_of_life_interface.GameOfLife):
 
 if __name__ == '__main__':
     print('write your tests here')  # don't forget to indent your code here!
-    g1 = GameOfLife(100, 3, 'b3/s23', "", 3)
-    for i in range(10):
-        g1.display_board()
+    g1 = GameOfLife(100, 4, 'b3/s23', "", (10, 10))
+    g1.display_board()
+    print(g1.return_board())
+    for i in range(90):
         g1.update()
-
+    g1.display_board()
 
