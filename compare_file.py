@@ -23,16 +23,34 @@ class GameOfLife(game_of_life_interface.GameOfLife):
             elif self.board_start_mode == 4:
                 self.board = np.zeros([self.size_of_board, self.size_of_board])
                 self.pattern_position = [10, 10]
-                self.rle = "24bo11b$22bobo11b$12b2o6b2o12b2o$11bo3bo4b2o12b2o$2o8bo5bo3b2o14b$2o8bo3bob2o4bobo11b$10bo5bo7bo11b$11bo3bo20b$12b2o!"
-                self.build_board()
+                self.add_gosper_gg()
             else:
                 self.board = np.random.choice([0, 255], (self.size_of_board, self.size_of_board), True, start_mode[1])
         else:
             self.board = np.zeros([self.size_of_board, self.size_of_board])
-            shape = self.transform_rle_to_matrix()
-            self.board[self.pattern_position[0]: self.pattern_position[0] + len(shape),
-            self.pattern_position[1]: self.pattern_position[1] + len(shape[0])] = np.array(shape)
+            self.board[self.pattern_position[0]:len(self.rle), self.pattern_position[1]:len(self.rle[0])] = self.transform_rle_to_matrix()
         return self.board
+
+    def add_gosper_gg(self):
+        j = self.pattern_position[0]
+        i = self.pattern_position[1]
+        self.board[i+5:i+7, j+0:j+2] = 255
+        self.board[i + 3, j+12:j+14] = 255
+        self.board[i + 3:i + 6, j+20:j + 22] = 255
+        self.board[i + 1:i + 3, j + 24] = 255
+        self.board[i + 2, j + 22] = 255
+        self.board[i + 6, j + 22] = 255
+        self.board[i + 6:i + 8, j + 24] = 255
+        self.board[i + 5:i + 8, j + 10] = 255
+        self.board[i + 9, j+12:j + 14] = 255
+        self.board[i + 4, j+11] = 255
+        self.board[i + 8, j+11] = 255
+        self.board[i + 6, j + 14] = 255
+        self.board[i + 4, j + 15] = 255
+        self.board[i + 8, j + 15] = 255
+        self.board[i + 5:i + 8, j + 16] = 255
+        self.board[i + 6, j + 17] = 255
+        self.board[i + 3:i + 5, j + 34:j + 36] = 255
 
     def return_board(self):
         board = self.board.tolist()
@@ -68,36 +86,23 @@ class GameOfLife(game_of_life_interface.GameOfLife):
 
     def transform_rle_to_matrix(self):
         rle = self.rle.split('$')
-        rle[-1] = rle[-1][:-1]
         matrix = []
-        values = {'b': [0], 'o': [255]}
+        values = {'b': 0, 'o': 255}
         for row in rle:
             vector = []
             index = 0
-            letters = []
-            for i in range(len(row)):
-                if row[i].isalpha():
-                    letters.append(i)
-            for letter in letters:
-                if letter - index >= 1:
-                    to_add = int(row[index: letter]) * values[row[letter]]
-                    vector.extend(to_add)
-                    index = letter + 1
-                else:
-                    vector.extend(values[row[letter]])
-                    index = letter + 1
-            matrix.append(vector)
-            if index < len(row):
-                matrix.extend([[0] * len(vector)] * (int(row[index: len(row)]) - 1))
-        diff = len(matrix[0]) - len(matrix[-1])
-        if diff > 0:
-            matrix[-1].extend([0] * diff)
+            for i in len(row):
+                while row[i].isdigit():
+                    second_index = i + 1
+                vector.append(int(row[index:second_index]) * [values[row[second_index]]])
+                index = i +
+                    vector.append(values[char])
         return matrix
 
 
 if __name__ == '__main__':
     print('write your tests here')  # don't forget to indent your code here!
-    g1 = GameOfLife(100, 4, 'b3/s23', "7bo6b$6bobo5b$7bo6b2$5b5o4b$4bo5bob2o$3bob2o3bob2o$3bobo2bobo3b$2obo3b2obo3b$2obo5bo4b$4b5o5b2$6bo7b$5bobo6b$6bo!", (10, 10))
+    g1 = GameOfLife(100, 4, 'b3/s23', "2b3obo2b2o$obob3o2b2o2$3b2o!", (10, 10))
     g1.display_board()
     print(g1.return_board())
     for i in range(90):
